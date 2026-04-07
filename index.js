@@ -268,19 +268,26 @@ async function generateMealPlan(userData) {
   else if (goalLower.includes("masa")|| goalLower.includes("bulk") || goalLower.includes("pridobi")){ targetCalories = tdee + 300; planType = "BULK"; }
   else { targetCalories = tdee; planType = "MAINTAIN"; }
   const targetProtein = Math.round(weight * 2.0);
+  // Display ranges (rounded to nearest 50 kcal ±50, nearest 10g protein ±10)
+  const calBase = Math.round(targetCalories / 50) * 50;
+  const calRange = `${calBase - 50}–${calBase + 50}`;
+  const protBase = Math.round(targetProtein / 10) * 10;
+  const protRange = `${protBase - 10}–${protBase + 10}`;
   const prompt = `Ustvari 3-dnevni prehranski načrt. Vrni SAMO čisti JSON.
 BAZA ŽIVIL:
 ${FOOD_DB}
-IZRAČUNANI PODATKI:
-- BMR: ${Math.round(bmr)} kcal | TDEE: ${tdee} kcal | Cilj: ${targetCalories} kcal (${planType}) | Beljakovine: ${targetProtein} g
+IZRAČUNANI PODATKI (za interno izračunavanje obrokov):
+- Cilj: ${targetCalories} kcal (${planType}) | Beljakovine: ${targetProtein} g
+PRIKAZ V DOKUMENTU (uporabi te razpone v JSON poljih calories_per_day, protein_per_day in v vsakem dnevu):
+- Kalorije: "${calRange}" | Beljakovine: "${protRange} g"
 STRANKA: ${name}, ${age} let, ${weight} kg, ${height} cm, cilj: ${userData.goal}
 Rad je: ${userData.likes} | Ne mara: ${userData.dislikes} | Obroki: ${mealsCount} | Alergije: ${userData.allergies}
 JSON struktura:
 {
-  "summary": { "calories_per_day": ${targetCalories}, "protein_per_day": ${targetProtein}, "meals_per_day": ${mealsCount}, "plan_type": "${planType}" },
-  "adaptations": "UVODNI DEL (8-12 povedi) v knjižni slovenščini s šumniki, brez emojijev, v tekočih odstavkih brez alinej. Naslavljaj ${name} z 'ti'. Vsebuje: 1) Kontekst – na podlagi katerih podatkov je plan sestavljen (telesna masa, višina, aktivnost, cilj). 2) Razlaga kaloričnega okvirja – zakaj je tak nastav smiseln za strankin cilj, kaj to pomeni v praksi. 3) Pomen beljakovin (${targetProtein} g) – ohranitev mišic, sitost, regeneracija. 4) Katere beljakovinske vire si vključil glede na preference stranke. 5) Ogljikovi hidrati – kateri viri, vloga glede na aktivnost, ne omejuj agresivno. 6) Maščobe – zmerno, tehtanje ključno pri kalorično gostih živilih. 7) Prilagodljivost jedilnikov – niso toga pravila ampak okvir, zamenjave dovoljene dokler kalorije in beljakovine ostanejo znotraj okvirja. 8) Štetje kalorij – nujnost tehtanja in vnašanja v MyFitnessPal, fokus na kalorije in beljakovine. 9) Merila za kuhanje: riž 100 g surovega = 300 g kuhanega, testenine 100 g surovih = 250 g kuhanih, krompir 100 g surovega = 87 g kuhanega, vsa živila se tehtajo surova razen riž testenine in krompir ki se tehtajo kuhani. Brez navajanja TDEE ali BMR kot številk. Brez oklepajev in vezajev.",
+  "summary": { "calories_per_day": "${calRange}", "protein_per_day": "${protRange} g", "meals_per_day": ${mealsCount}, "plan_type": "${planType}" },
+  "adaptations": "UVODNI DEL (8-12 povedi) v knjižni slovenščini s šumniki, brez emojijev, v tekočih odstavkih brez alinej. Naslavljaj ${name} z 'ti'. Vsebuje: 1) Kontekst – na podlagi katerih podatkov je plan sestavljen (telesna masa, višina, aktivnost, cilj). 2) Razlaga kaloričnega okvirja – zakaj je tak nastav smiseln za strankin cilj, kaj to pomeni v praksi. Navedi kalorični razpon ${calRange} kcal. 3) Pomen beljakovin (${protRange} g) – ohranitev mišic, sitost, regeneracija. 4) Katere beljakovinske vire si vključil glede na preference stranke. 5) Ogljikovi hidrati – kateri viri, vloga glede na aktivnost, ne omejuj agresivno. 6) Maščobe – zmerno, tehtanje ključno pri kalorično gostih živilih. 7) Prilagodljivost jedilnikov – niso toga pravila ampak okvir, zamenjave dovoljene dokler kalorije in beljakovine ostanejo znotraj okvirja. 8) Štetje kalorij – nujnost tehtanja in vnašanja v MyFitnessPal, fokus na kalorije in beljakovine. 9) Merila za kuhanje: riž 100 g surovega = 300 g kuhanega, testenine 100 g surovih = 250 g kuhanih, krompir 100 g surovega = 87 g kuhanega, vsa živila se tehtajo surova razen riž testenine in krompir ki se tehtajo kuhani. Brez navajanja TDEE ali BMR kot številk. Brez oklepajev in vezajev.",
   "intro": "ZAKLJUČNI DEL (4-6 povedi) v knjižni slovenščini s šumniki, brez emojijev. Vsebuje: 1) Napredek – kako ga meriti: tedensko povprečje telesne teže (ne dnevne meritve, tehtnica niha 1-2 kg na dan), ogledalo, performans na treningu. 2) Doslednost – napredek ni rezultat enega dobrega tedna ampak mesecev konsistentnega dela. 3) Motivacijski zaključek. Brez oklepajev in vezajev.",
-  "days": [{ "day": 1, "calories": ${targetCalories}, "protein": ${targetProtein}, "meals": [{ "number": 1, "name": "ZAJTRK", "calories": 500, "protein": 35, "ingredients": ["100 g ovsenih kosmičev (389 kcal, 13,5 g B)"] }] }]
+  "days": [{ "day": 1, "calories": "${calRange}", "protein": "${protRange} g", "meals": [{ "number": 1, "name": "ZAJTRK", "calories": 500, "protein": 35, "ingredients": ["100 g ovsenih kosmičev (389 kcal, 13,5 g B)"] }] }]
 }
 PRAVILA:
 - ${mealsCount} obrokov/dan, 3–6 sestavin z gramažo in kcal v oklepaju
