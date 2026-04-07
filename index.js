@@ -108,6 +108,25 @@ NAČELA:
 - Vsa živila se tehtajo surova. Riž, testenine in krompir se tehtajo kuhani (100 g surovega riža = 300 g kuhanega, 100 g surovih testenin = 250 g kuhanih, 100 g surovega krompirja = 87 g kuhanega). V adaptations omeni ta merila.
 - Personalizacija je absolutna prioriteta – strankine želje, preference in omejitve so zakon.
 
+RAZNOLIKOST MED DNEVI: Vsak dan mora imeti drugačne obroke kot ostala dva dni. Nikoli ne ponovi istega obroka (ali skoraj identičnega obroka) na isti poziciji v različnih dneh. Če je dan 1 zajtrk ovsena kaša z jogurtom, dan 2 in dan 3 ne smeta imeti ovsene kaše z jogurtom za zajtrk. Vsak obrok mora biti vsebinsko različen – različna živila, različna kombinacija, različen stil priprave. Isto živilo (npr. piščanec) je dovoljeno v različnih dneh, ampak v drugačni obliki ali kombinaciji (npr. dan 1 piščanec z rižem, dan 3 piščanec s kruhom/sendvič). Brez copy-paste obrokov med dnevi.
+
+LOGIKA SESTAVE OBROKOV: Vsak obrok mora biti kulinarično in praktično smiseln – takšen kot ga nekdo dejansko pripravi in poje v enem obroku. V vsakem obroku je EN jasen protein vir. Ne mešaj nekompatibilnih živil samo zato da ustrežeš makrotom.
+
+Dobre kombinacije:
+- Whey/skyr/jogurt/skuta + ovseni kosmiči/sadje/oreščki/arašidovo maslo
+- Jajca + kruh/toast + zelenjava ali sir ali šunka
+- Piščanec/govedina/riba/tuna + riž/krompir/testenine + zelenjava
+- Skuta/jogurt + sadje + oreščki (snack obrok)
+- Tuna/piščanec + kruh = sendvič stil
+
+Prepovedane kombinacije v istem obroku:
+- Whey protein skupaj z jajci ali mesom – ne sodijo skupaj
+- Piščanec ali riba z ovsenimi kosmiči – kulinarično nesmiselno
+- Dva vira mesa ali dva proteinska praška v istem obroku
+- Več kot en "težek" protein v istem obroku (npr. jajca + piščanec + whey)
+
+Pravilo: Whey/proteinsko mleko/jogurt → brez jajc in mesa v tem obroku. Jajca ali meso → brez wheya v tem obroku.
+
 DOVOLJENI VIRI HRANIL:
 Beljakovine: piščančje prsi, puranja prsa, govedina (pusta 5%), bele ribe (oslič, tilapija, brancin), losos, tuna, grški jogurt (0%, 5%, 10%), jajca, skyr, whey protein, proteinsko mleko, zrnati sir, skuta
 Ogljikovi hidrati: ovseni kosmiči, basmati riž, beli riž, polnozrnate testenine, bele testenine, krompir, sladki krompir, polnozrnat kruh, beli kruh, sadje (banana, jabolko, hruška, jagode, borovnice, maline, mango itd.)
@@ -270,6 +289,8 @@ PRAVILA:
 - Vsa živila se tehtajo surova. Riž, testenine in krompir se tehtajo KUHANI (100 g surovega riža = 300 g kuhanega, 100 g surovih testenin = 250 g kuhanih)
 - Pri hujšanju dodajaj volumen z zelenjavo, ne z makrohranili
 - Enostavni, hitri za pripravo, smiselni, okusni obroki – brez eksotike in kompliciranja
+- Vsak obrok ima EN protein vir. NE mešaj whey + jajca, NE mešaj piščanca z ovsenimi kosmiči – samo kulinarično logične kombinacije
+- RAZNOLIKOST: Vsak dan mora imeti drugačne obroke. Ne ponavljaj istega obroka na isti poziciji v različnih dneh (npr. isti zajtrk dan 1 in dan 3 je prepovedano)
 - Če stranka želi junk food (navedeno v preferencah), ga OBVEZNO vključi v en obrok na dan – MAKSIMALNO 20% dnevnih kalorij (= max ${Math.round(targetCalories * 0.2)} kcal) iz junk fooda, preostalih 80% iz zdravih virov
 - NE vključi: ${userData.dislikes}, ${userData.allergies}, humus, soja, sojini izdelki, tofu, tempeh, edamame
 - SAMO JSON.`;
@@ -522,32 +543,10 @@ function mealCard(meal, idx) {
             borders: cellBorders,
             margins: { top: 100, bottom: 100, left: 160, right: 160 },
             children: meal.ingredients.map((ing) => {
-              const { name, info } = splitIngredient(ing);
-              const nameW = rW - 160 - 160 - 2400; // left cell: food name
-              const infoW = 2400; // right cell: kcal info, fixed width
-              return new Table({
-                width: { size: rW - 320, type: WidthType.DXA },
-                columnWidths: [nameW, infoW],
-                borders: tableBorders,
-                rows: [new TableRow({ children: [
-                  new TableCell({
-                    width: { size: nameW, type: WidthType.DXA },
-                    shading: { fill: bg, type: ShadingType.CLEAR },
-                    borders: cellBorders,
-                    margins: { top: 40, bottom: 40, left: 0, right: 80 },
-                    children: [new Paragraph({ children: [new TextRun({ text: name, size: 20, color: LIGHT, font: "Arial" })] })],
-                  }),
-                  new TableCell({
-                    width: { size: infoW, type: WidthType.DXA },
-                    shading: { fill: bg, type: ShadingType.CLEAR },
-                    borders: cellBorders,
-                    margins: { top: 40, bottom: 40, left: 80, right: 0 },
-                    children: [new Paragraph({
-                      alignment: AlignmentType.RIGHT,
-                      children: [new TextRun({ text: info, size: 18, color: GRAY, font: "Arial" })],
-                    })],
-                  }),
-                ]})],
+              const { name } = splitIngredient(ing);
+              return new Paragraph({
+                spacing: { before: 40, after: 40 },
+                children: [new TextRun({ text: name, size: 20, color: LIGHT, font: "Arial" })],
               });
             }),
           }),
