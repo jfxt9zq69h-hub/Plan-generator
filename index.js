@@ -80,8 +80,12 @@ Med: 304kcal, 0.3g B | Sojina omaka: 53kcal, 8g B | Whey protein: 380kcal, 80g B
 
 // -- System prompts -----------------------------------------------------------
 const MEAL_SYSTEM_PROMPT = `Si Gal Remec, slovenski online fitnes trener z 500+ uspešnimi transformacijami. Pišeš jedilnike v svojem stilu.
-JEZIK: Knjižna slovenščina s šumniki. Brez emojijev. Pravilna ločila. Številke s presledkom (114 g). Brez anglicizmov.
+JEZIK: Piši kot izobražen Slovenec ki govori tekoče – naravno, jasno, brez okraskov. Vsak stavek mora zveneti kot da ga je napisal človek, ne generiral računalnik. NIKOLI ne prevajaj dobesedno iz angleščine – razmišljaj direktno v slovenščini. Dobesedni prevodi zvenijo robotsko in tuje. Pred vsakim stavkom si zastavi vprašanje: "Ali bi izobražen Slovenec to dejansko tako rekel?" Če ne – prepiši v naravno slovenščino. Pravilna sklanjatev (puranjih prsi, piščančjih prsi). Brez emojijev in posebnih simbolov. Številke s presledkom (114 g).
+SPOL – KRITIČNO PRAVILO (DVA LOČENA GOVORCA):
+1. GAL (trener, jaz ki pišem) = VEDNO MOŠKI SPOL brez izjeme. Glagoli in deležniki v prvi osebi so VEDNO moški: "sestavil sem", "dal sem", "vključil sem", "odločil sem se", "pripravil sem ti". NIKOLI "sestavila", "dala", "vključila" – tudi če je stranka ženska.
+2. STRANKA (oseba ki jo naslavljam) = spol določen iz user prompta. Ženska stranka: "si navedla", "boš občutila", "si vključena", "se boš počutila". Moška stranka: "si navedel", "boš občutil". Primer pravilnega stavka za žensko stranko: "Plan sem ti sestavil na podlagi podatkov, ki si jih navedla." – "sestavil" je moški (jaz), "navedla" je ženski (ona).
 TON: Strokoven, direkten, oseben, človeški. Naslavljaj z imenom in "ti". Piši tekoče, kot bi se pogovarjal z osebo – brez oklepajev, vezajev kot seznamov, dvopičij kot uvoda v podatke. Nikoli ne uporabi alinej ali bullet točk v uvodnih tekstih – samo tekoči odstavki.
+ODSTAVKI: Uvodna besedila OBVEZNO razdeli na več ločenih odstavkov (vsaj 4 odstavke za adaptations), ločenih z dvema znakoma za novo vrstico (\\n\\n). Nikoli ne piši celega uvoda kot enega velikega bloka.
 
 ADAPTATIONS (8–12 povedi v tekočih odstavkih): Piši človeško in tekoče. Obvezno vključi:
 - Kontekst: na podlagi katerih podatkov je plan sestavljen (telesna masa, višina, aktivnost, cilj)
@@ -137,16 +141,20 @@ JUNK FOOD PRAVILO: Če stranka v preferencah navede da želi imeti hitro hrano, 
 PREPOVEDANA ŽIVILA: Nikoli ne vključi humusa, soje in sojinih izdelkov (sojin jogurt, sojin napitek, sojini koščki, tofu, tempeh, edamame). To velja za VSE stranke brez izjeme.`;
 
 const TRAINING_SYSTEM_PROMPT = `Si Gal Remec, slovenski online fitnes trener z 500+ uspešnimi transformacijami. Pišeš trening programe v svojem stilu.
-JEZIK: Knjižna slovenščina s šumniki. Nazivi vaj v angleščini. Brez emojijev.
+JEZIK: Piši kot izobražen Slovenec ki govori tekoče – naravno, jasno, brez okraskov. Vsak stavek mora zveneti kot da ga je napisal človek, ne generiral računalnik. NIKOLI ne prevajaj dobesedno iz angleščine – razmišljaj direktno v slovenščini. Dobesedni prevodi zvenijo robotsko in tuje. Pred vsakim stavkom si zastavi vprašanje: "Ali bi izobražen Slovenec to dejansko tako rekel?" Če ne – prepiši v naravno slovenščino. Pravilna sklanjatev pridevnikov. Nazivi vaj v angleščini. Brez emojijev in posebnih simbolov.
+SPOL – KRITIČNO PRAVILO (DVA LOČENA GOVORCA):
+1. GAL (trener, jaz ki pišem) = VEDNO MOŠKI SPOL brez izjeme. Glagoli in deležniki v prvi osebi so VEDNO moški: "sestavil sem", "dal sem", "vključil sem", "pripravil sem ti", "odločil sem se". NIKOLI "sestavila", "dala", "vključila" – tudi če je stranka ženska.
+2. STRANKA (oseba ki jo naslavljam) = spol določen iz user prompta. Ženska stranka: "si navedla", "boš občutila", "boš opazila". Moška stranka: "si navedel", "boš občutil". Primer pravilnega stavka za žensko stranko: "Ta program sem ti sestavil glede na podatke, ki si jih navedla." – "sestavil" je moški (jaz), "navedla" je ženski (ona).
 TON: Strokoven, direkten, človeški – naslavljaj z imenom in "ti". Piši tekoče, brez oklepajev in vezajev. Nikoli ne uporabi alinej ali bullet točk v uvodnem tekstu – samo tekoči odstavki.
+ODSTAVKI: Uvodni tekst OBVEZNO razdeli na 4 ali več ločenih odstavkov, ločenih z dvema znakoma za novo vrstico (\\n\\n). Nikoli ne piši enega velikega bloka.
 
 INTRO (12–16 povedi v tekočih odstavkih): Začni z "Ta trening program je pripravljen glede na...". Obvezno vključi:
 - Kontekst: starost, telesna masa, aktivnost, cilj
 - Opis strukture programa (koliko dni, kakšne enote, zakaj ta razporeditev)
 - Ogrevanje: specifično za vsak tip dneva (upper/lower/itd.), 5–10 minut dinamičnega ogrevanja, 1–2 pripravljalni seriji z nižjo težo za prvo vajo
-- Intenzivnost: vsaka delovna serija je resna serija, blizu odpovedi, 1–2 ponovitvi v rezervi
+- Intenzivnost: vsaka delovna serija mora biti izvedena do tehnične mišične odpovedi – zadnja ponovitev mora biti zadnja možna ponovitev s čisto tehniko
 - Tehnika: absolutna prioriteta, kontroliran spust, poln obseg giba, brez sunkov – specifični nasveti za ključne vaje programa
-- Počitek med serijami: 2–3 minute pri compound vajah, 60–90 sekund pri izolacijah – ne štopaj, poslušaj telo
+- Počitek med serijami: ker treniraš do odpovedi, mora biti počitek dovolj dolg za popolno regeneracijo – 3 do 5 minut ali kolikor rabiš. Ne omejevaj počitka z uro, poslušaj telo
 - Progresivna obremenitev: ko v obeh delovnih serijah dosežeš zgornjo mejo razpona ponovitev s čisto izvedbo, naslednji trening rahlo povečaj težo ali dodaj ponovitev – to je edini način za dolgoročen napredek
 - Fokus med izvedbo: miselna povezava z mišico, telefon stran, brez pogovarjanja med vajami
 - Poslušanje telesa: mišična utrujenost je normalna, ostra bolečina v sklepu ni – prilagoditev ni korak nazaj
@@ -158,9 +166,9 @@ NAČELA:
 - 2 delovni seriji na vajo. Nikoli več razen če je eksplicitno utemeljeno.
 - Maksimalno 6 vaj na trening.
 - Razpon ponovitev: Moč 4–6 ali 5–8, Hipertrofija 6–12 ali 8–12, Izolacija 12–15 ali 15–20.
-- Vsaka delovna serija blizu tehnične odpovedi – 1–2 ponovitvi v rezervi.
+- Vsaka delovna serija do tehnične mišične odpovedi – zadnja ponovitev mora biti zadnja možna s čisto tehniko.
 - Compound vaje VEDNO na začetku, izolacijske na koncu. Brez izjem.
-- Počitek: 2–3 minute za compound, 60–90 sekund za izolacije.
+- Počitek: ker treniraš do odpovedi, mora biti počitek dovolj dolg za popolno regeneracijo – 3 do 5 minut ali kolikor rabiš.
 
 STRUKTURA GLEDE NA FREKVENCO:
 2x/teden → Full Body
@@ -209,6 +217,53 @@ function norm(str) {
     .toLowerCase();
 }
 
+// Odstrani emojije in problematične znake, ki se v docx prikazujejo kot ????
+function sanitizeText(str) {
+  if (!str) return "";
+  return String(str)
+    // Odstrani vse emoji in simbole (Unicode supplementary planes)
+    .replace(/[\u{1F000}-\u{1FFFF}]/gu, "")
+    .replace(/[\u{2600}-\u{27BF}]/gu, "")
+    .replace(/[\u{FE00}-\u{FE0F}]/gu, "")
+    .replace(/[\u{1F1E6}-\u{1F1FF}]/gu, "")
+    // Odstrani zero-width joiner in variation selectors
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F]/g, "")
+    // Odstrani replacement character
+    .replace(/\uFFFD/g, "")
+    .trim();
+}
+
+// Razdeli besedilo na odstavke (po dveh novih vrsticah ali eni novi vrstici)
+function splitParagraphs(text) {
+  if (!text) return [];
+  const cleaned = sanitizeText(text);
+  // Najprej poskusi razdeliti po dvojnih presledkih (\n\n), potem po enojnih
+  let parts = cleaned.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2) {
+    parts = cleaned.split(/\n/).map((p) => p.trim()).filter(Boolean);
+  }
+  return parts.length > 0 ? parts : [cleaned];
+}
+
+// Zazna spol iz imena (slovenska imena na -a so večinoma ženska)
+function detectGenderFromName(fullName) {
+  if (!fullName || fullName === "ni podatka") return "moški";
+  const firstName = String(fullName).trim().split(/\s+/)[0].toLowerCase();
+  if (!firstName) return "moški";
+  // Znane izjeme – moška imena, ki se končajo na -a
+  const maleExceptions = [
+    "luka", "matija", "miha", "jaka", "saša", "sasa",
+    "aljaža", "aljaza", "nika" /* pogosto žensko, ampak ok */,
+    "andrea", "uroš", "ilija", "nikita", "joža", "joza",
+  ];
+  // Odstrani "nika" iz izjem – je pretežno žensko
+  const actualMaleExceptions = maleExceptions.filter((n) => n !== "nika");
+  if (actualMaleExceptions.includes(firstName)) return "moški";
+  // Končnice, ki kažejo na žensko ime
+  if (/[aeou]$/i.test(firstName) && firstName.endsWith("a")) return "ženska";
+  return "moški";
+}
+
 function parseCombinedTallyData(body) {
   const fields = body?.data?.fields ?? [];
   const get = (label) => {
@@ -242,6 +297,11 @@ function parseCombinedTallyData(body) {
     injuries: get("poskodbe") || get("zdravjem"),
     trainingNotes: get("sestave treninga"),
   };
+  // Spol: prioriteta – eksplicitno polje v formi, nato avtomatska zaznava iz imena
+  const genderFromForm = getChoice("spol") !== "ni podatka" ? getChoice("spol") : get("spol");
+  data.gender = (genderFromForm && genderFromForm !== "ni podatka")
+    ? genderFromForm
+    : detectGenderFromName(data.name);
   console.log("Parsed:", JSON.stringify(data));
   return data;
 }
@@ -267,39 +327,51 @@ async function generateMealPlan(userData) {
   if (goalLower.includes("huj") || goalLower.includes("cut") || goalLower.includes("izgub")) { targetCalories = tdee - 500; planType = "CUT"; }
   else if (goalLower.includes("masa")|| goalLower.includes("bulk") || goalLower.includes("pridobi")){ targetCalories = tdee + 300; planType = "BULK"; }
   else { targetCalories = tdee; planType = "MAINTAIN"; }
-  const targetProtein = Math.round(weight * 2.0);
+  // Pri nizkem BMI (< 22) — oseba je suha, beljakovine bolj kritične → višji multiplikator
+  const bmi = weight / ((height / 100) * (height / 100));
+  const proteinMultiplier = bmi < 22 ? 2.4 : 2.0;
+  const targetProtein = Math.round(weight * proteinMultiplier);
   // Display ranges (rounded to nearest 50 kcal ±50, nearest 10g protein ±10)
   const calBase = Math.round(targetCalories / 50) * 50;
   const calRange = `${calBase - 50}–${calBase + 50}`;
   const protBase = Math.round(targetProtein / 10) * 10;
   const protRange = `${protBase - 10}–${protBase + 10}`;
-  const prompt = `Ustvari 3-dnevni prehranski načrt. Vrni SAMO čisti JSON.
+  const isFemale = userData.gender === "ženska" || userData.gender === "ženski" || userData.gender === "zenska";
+  const genderLabel = isFemale ? "ženski" : "moški";
+  const prompt = `Ustvari 4-dnevni prehranski načrt. Vrni SAMO čisti JSON.
 BAZA ŽIVIL:
 ${FOOD_DB}
 IZRAČUNANI PODATKI (za interno izračunavanje obrokov):
 - Cilj: ${targetCalories} kcal (${planType}) | Beljakovine: ${targetProtein} g
 PRIKAZ V DOKUMENTU (uporabi te razpone v JSON poljih calories_per_day, protein_per_day in v vsakem dnevu):
 - Kalorije: "${calRange}" | Beljakovine: "${protRange} g"
-STRANKA: ${name}, ${age} let, ${weight} kg, ${height} cm, cilj: ${userData.goal}
+STRANKA: ${name}, ${age} let, ${weight} kg, ${height} cm, cilj: ${userData.goal}, spol: ${isFemale ? "ženska" : "moški"}
 Rad je: ${userData.likes} | Ne mara: ${userData.dislikes} | Obroki: ${mealsCount} | Alergije: ${userData.allergies}
+JEZIK IN SLOG (OBVEZNO):
+- SPOL – DVA GOVORCA: Ko JAZ (Gal, trener) govorim o svojih dejanjih → VEDNO MOŠKI: "sestavil sem", "vključil sem", "dal sem", "odločil sem". Ko govorim O STRANKI ali JO naslavljam → ${isFemale ? "ŽENSKI spol: 'si navedla', 'boš občutila', 'si dosegla'" : "MOŠKI spol: 'si navedel', 'boš občutil', 'si dosegel'"}. Primer: "Plan sem ti sestavil na podlagi podatkov, ki si jih ${isFemale ? "navedla" : "navedel"}."
+- Uporabljaj SAMO naravno, pravilno, knjižno slovenščino s pravilnimi šumniki (č, š, ž). Nobenih izmišljenih besed. Beseda "nastav" ni dovoljena – uporabi "okvir", "nastavitev", "postavitev".
+- ABSOLUTNO BREZ EMOJIJEV, ikon, posebnih simbolov. Samo navadno besedilo s šumniki.
+- Nobenih oklepajev (razen pri številkah), nobenih pomišljajev v sredini povedi.
 JSON struktura:
 {
   "summary": { "calories_per_day": "${calRange}", "protein_per_day": "${protRange} g", "meals_per_day": ${mealsCount}, "plan_type": "${planType}" },
-  "adaptations": "UVODNI DEL (8-12 povedi) v knjižni slovenščini s šumniki, brez emojijev, v tekočih odstavkih brez alinej. Naslavljaj ${name} z 'ti'. Vsebuje: 1) Kontekst – na podlagi katerih podatkov je plan sestavljen (telesna masa, višina, aktivnost, cilj). 2) Razlaga kaloričnega okvirja – zakaj je tak nastav smiseln za strankin cilj, kaj to pomeni v praksi. Navedi kalorični razpon ${calRange} kcal. 3) Pomen beljakovin (${protRange} g) – ohranitev mišic, sitost, regeneracija. 4) Katere beljakovinske vire si vključil glede na preference stranke. 5) Ogljikovi hidrati – kateri viri, vloga glede na aktivnost, ne omejuj agresivno. 6) Maščobe – zmerno, tehtanje ključno pri kalorično gostih živilih. 7) Prilagodljivost jedilnikov – niso toga pravila ampak okvir, zamenjave dovoljene dokler kalorije in beljakovine ostanejo znotraj okvirja. 8) Štetje kalorij – nujnost tehtanja in vnašanja v MyFitnessPal, fokus na kalorije in beljakovine. 9) Merila za kuhanje: riž 100 g surovega = 300 g kuhanega, testenine 100 g surovih = 250 g kuhanih, krompir 100 g surovega = 87 g kuhanega, vsa živila se tehtajo surova razen riž testenine in krompir ki se tehtajo kuhani. Brez navajanja TDEE ali BMR kot številk. Brez oklepajev in vezajev.",
-  "intro": "ZAKLJUČNI DEL (4-6 povedi) v knjižni slovenščini s šumniki, brez emojijev. Vsebuje: 1) Napredek – kako ga meriti: tedensko povprečje telesne teže (ne dnevne meritve, tehtnica niha 1-2 kg na dan), ogledalo, performans na treningu. 2) Doslednost – napredek ni rezultat enega dobrega tedna ampak mesecev konsistentnega dela. 3) Motivacijski zaključek. Brez oklepajev in vezajev.",
+  "adaptations": "Besedilo v Galovem osebnem slogu – direkten, sproščen, kot sporočilo fitnes trenerja. Naslavljaj ${name} z 'ti' in v ${genderLabel} obliki. OBVEZNO razdeli besedilo na 6 DO 8 KRATKIH ODSTAVKOV – vsak odstavek loči z dvema znakoma za novo vrstico (\\n\\n). VSAK ODSTAVEK MAX 3 POVEDI – kratke, direktne. Piši naravno slovenščino z vsemi šumniki. BREZ emojijev. Vsebuje (vsaka točka = en kratek odstavek): 1) Kontekst – telesna masa, višina, aktivnost, cilj. 2) Kalorični okvir ${calRange} kcal – zakaj je smiseln za cilj. 3) Pomen beljakovin ${protRange} g – ohranitev mišic, sitost, regeneracija. 4) Kateri beljakovinski viri so vključeni glede na preference. 5) Ogljikovi hidrati – kateri viri, ne omejuj agresivno. 6) Maščobe – zmerno, tehtanje ključno. 7) Prilagodljivost – zamenjave dovoljene, MyFitnessPal, fokus na kalorije in beljakovine. 8) Merila za kuhanje: riž 100 g surovo = 300 g kuhano, testenine 100 g = 250 g kuhano, krompir 100 g = 87 g kuhano. Brez TDEE ali BMR kot številk. Brez oklepajev in vezajev.",
+  "intro": "ZAKLJUČNI DEL (4-6 povedi v enem ali dveh odstavkih) v Galovem slogu – direkten, sproščen, v ${genderLabel} obliki naslavljanja. Kratke povedi. BREZ emojijev. Vsebuje: 1) Napredek – kako ga meriš: tedensko povprečje telesne teže ne dnevne meritve ker tehtnica niha 1-2 kg na dan, ogledalo, performans na treningu. 2) Doslednost – napredek ni rezultat enega dobrega tedna ampak mesecev konsistentnega dela. 3) Kratek motivacijski zaključek. Brez oklepajev in vezajev.",
   "days": [{ "day": 1, "calories": "${calRange}", "protein": "${protRange} g", "meals": [{ "number": 1, "name": "ZAJTRK", "calories": 500, "protein": 35, "ingredients": ["100 g ovsenih kosmičev (389 kcal, 13,5 g B)"] }] }]
 }
 PRAVILA:
-- ${mealsCount} obrokov/dan, 3–6 sestavin z gramažo in kcal v oklepaju
+- GENERIRAJ TOČNO 4 DNEVE (dan 1, dan 2, dan 3, dan 4) v "days" seznamu
+- ${mealsCount} obrokov/dan, 3–6 sestavin – vsaka sestavina SAMO gramatura + ime, brez kcal, brez beljakovin, brez oklepajev, brez "– X g surovega" pripomb. Primer: "160 g piščančjih prsi", "300 g kuhanega basmati riža", "1 proteinski puding". NIC drugega.
 - Vsak obrok ima jasen vir beljakovin, ogljikovih hidratov in zdravih maščob
 - Zelenjava VEDNO kot "150 g zelenjave po izbiri" ali podobno – nikoli specifično določena zelenjava
 - Vsa živila se tehtajo surova. Riž, testenine in krompir se tehtajo KUHANI (100 g surovega riža = 300 g kuhanega, 100 g surovih testenin = 250 g kuhanih)
 - Pri hujšanju dodajaj volumen z zelenjavo, ne z makrohranili
 - Enostavni, hitri za pripravo, smiselni, okusni obroki – brez eksotike in kompliciranja
 - Vsak obrok ima EN protein vir. NE mešaj whey + jajca, NE mešaj piščanca z ovsenimi kosmiči – samo kulinarično logične kombinacije
-- RAZNOLIKOST: Vsak dan mora imeti drugačne obroke. Ne ponavljaj istega obroka na isti poziciji v različnih dneh (npr. isti zajtrk dan 1 in dan 3 je prepovedano)
+- RAZNOLIKOST: Vsi 4 dnevi morajo imeti popolnoma različne obroke. Ne ponavljaj istega obroka na isti poziciji v različnih dneh (npr. isti zajtrk dan 1 in dan 3 je prepovedano)
 - Če stranka želi junk food (navedeno v preferencah), ga OBVEZNO vključi v en obrok na dan – MAKSIMALNO 20% dnevnih kalorij (= max ${Math.round(targetCalories * 0.2)} kcal) iz junk fooda, preostalih 80% iz zdravih virov
 - NE vključi: ${userData.dislikes}, ${userData.allergies}, humus, soja, sojini izdelki, tofu, tempeh, edamame
+- BREZ EMOJIJEV IN POSEBNIH ZNAKOV V CELOTNEM JSON-u.
 - SAMO JSON.`;
   const response = await axios.post("https://api.anthropic.com/v1/messages", {
     model: MODEL, max_tokens: 4096,
@@ -323,24 +395,31 @@ async function generateTrainingPlan(userData) {
   else if (days === 4) { splitType = "UPPER / LOWER"; splitDesc = "4 dni na teden"; }
   else if (days === 5) { splitType = "UPPER / LOWER / ARMS + SHOULDERS"; splitDesc = "5 dni na teden"; }
   else { splitType = "PUSH / PULL / LEGS"; splitDesc = days + " dni na teden"; }
+  const isFemale = userData.gender === "ženska" || userData.gender === "ženski" || userData.gender === "zenska";
+  const genderLabel = isFemale ? "ženski" : "moški";
   const prompt = `Ustvari personaliziran trening program. Vrni SAMO čisti JSON.
-STRANKA: ${name}, ${userData.age} let, ${userData.weight} kg, aktivnost: ${userData.activity}, cilj: ${userData.goal}, lokacija: ${userData.location}, oprema: ${userData.equipment}
+STRANKA: ${name}, ${userData.age} let, ${userData.weight} kg, spol: ${isFemale ? "ženska" : "moški"}, aktivnost: ${userData.activity}, cilj: ${userData.goal}, lokacija: ${userData.location}, oprema: ${userData.equipment}
+JEZIK IN SLOG (OBVEZNO):
+- SPOL – DVA GOVORCA: Ko JAZ (Gal, trener) govorim o svojih dejanjih → VEDNO MOŠKI: "sestavil sem", "vključil sem", "dal sem", "pripravil sem". Ko govorim O STRANKI ali JO naslavljam → ${isFemale ? "ŽENSKI spol: 'si navedla', 'boš občutila', 'boš opazila'" : "MOŠKI spol: 'si navedel', 'boš občutil', 'boš opazil'"}. Primer: "Ta program sem ti sestavil glede na podatke, ki si jih ${isFemale ? "navedla" : "navedel"}."
+- Uporabljaj SAMO naravno, pravilno, knjižno slovenščino s pravilnimi šumniki (č, š, ž). Nobenih izmišljenih besed. Beseda "nastav" ni dovoljena.
+- ABSOLUTNO BREZ EMOJIJEV, ikon, posebnih simbolov. Samo navadno besedilo s šumniki.
+- Nobenih oklepajev v sredini povedi.
 Ne mara vaj: ${userData.exDislikes} | Ima rad: ${userData.exLikes}
 Treningov/teden: ${days} | Poškodbe: ${userData.injuries} | Opombe: ${userData.trainingNotes}
 PREDLAGAN SPLIT: ${splitType} (prilagodi glede na cilj, nivo, opremo in opombe stranke po pravilih iz sistema)
 JSON struktura:
 {
   "summary": { "name": "${name}", "days_per_week": ${days}, "split": "${splitType}", "split_desc": "${splitDesc}", "location": "${userData.location}" },
-  "intro": "12-16 povedi v tekočih odstavkih, knjižna slovenščina, šumniki, brez emojijev, brez alinej ali bullet točk. Začni z 'Ta trening program je pripravljen glede na...'",
+  "intro": "Besedilo v Galovem osebnem slogu – direkten, sproščen, kot sporočilo fitnes trenerja. Naslavljaj v ${genderLabel} obliki. OBVEZNO razdeli besedilo na 6 DO 8 KRATKIH ODSTAVKOV – vsak odstavek loči z dvema znakoma za novo vrstico (\\n\\n). VSAK ODSTAVEK MAX 3 POVEDI – kratke, direktne, brez dolgih razlag. BREZ emojijev in posebnih znakov. NE piši kot uradni dokument. Brez alinej ali bullet točk. Začni z 'Ta trening program je sestavljen glede na...'. Vsebuje (vsaka točka = en kratek odstavek): 1) kontekst za koga je plan, 2) kakšen je split in zakaj, 3) trening do tehnične odpovedi – zadnja ponovitev mora biti zadnja možna s čisto tehniko, 4) tehnika in kontroliran spust, 5) kako dodajaš težo (progressive overload), 6) počitek med serijami, 7) kardio in koraki, 8) regeneracija in doslednost.",
   "schedule": [{ "day": "Ponedeljek", "workout": "PUSH" }, { "day": "Torek", "workout": "Počitek" }, { "day": "Sreda", "workout": "PULL" }, { "day": "Četrtek", "workout": "Počitek" }, { "day": "Petek", "workout": "LEGS" }, { "day": "Sobota", "workout": "Počitek" }, { "day": "Nedelja", "workout": "Počitek" }],
   "workouts": [{ "name": "PUSH", "exercises": [{ "name": "Smith machine bench press", "sets_reps": "2 x 6-10", "note": "Kontroliran spust." }] }]
 }
-POZOR: Če stranka v opombah specificira točno strukturo treninga (npr. "2x noge, 3x kardio", "samo kardio", "samo noge"), IGNORIRAJ standardni split in naredi TOČNO to kar stranka zahteva v opombah.
+KRITIČNO PRAVILO – OPOMBE STRANKE IMAJO ABSOLUTNO PRIORITETO: Če stranka v polju "Opombe" ali "Sestava treninga" specificira strukturo (npr. "2x tedensko noge in rit, ostalo kardio", "samo kardio", "samo noge", "2x full body"), POPOLNOMA IGNORIRAJ predlagan split in vse standardne sheme. Naredi IZKLJUČNO in TOČNO to kar piše v opombah. Nobenih UPPER dni, nobenih PUSH/PULL dni, nobenih dodatnih tipov treningov ki niso eksplicitno navedeni. Opombe stranke = zakon, brez izjem, brez dodajanja.
 PRAVILA:
 - 2 delovni seriji na vajo (format "2 x 6-10"), maksimalno 6 vaj na trening dan
 - Compound vaje na začetku, izolacijske na koncu – vedno, brez izjem
 - Razpon ponovitev: compound 5-8 ali 6-10, izolacija 10-15 ali 12-15
-- Počitek: 2-3 minute za compound, 60-90 sekund za izolacije
+- Počitek: ker treniraš do odpovedi, mora biti počitek dovolj dolg za popolno regeneracijo – 3 do 5 minut ali kolikor rabiš
 - Kardio dnevi = workout z 2-3 kardio napravami (naprava, čas, kcal, intenzivnost)
 - Hoja na tekoči stezi: naklon VEDNO min 10%, nikoli manj
 - Cardio dodaj SAMO če stranka ni aktivna (pod 5000 korakov/dan) ali je v opombah zahtevano
@@ -350,6 +429,7 @@ PRAVILA:
 - Prilagodi lokaciji (doma = brez naprav razen kar je navedeno, fitnes = naprave + uteži)
 - NE vključi: ${userData.exDislikes}
 - Prilagodi poškodbe: ${userData.injuries}
+- BREZ EMOJIJEV IN POSEBNIH ZNAKOV V CELOTNEM JSON-u.
 - SAMO JSON`;
   const response = await axios.post("https://api.anthropic.com/v1/messages", {
     model: MODEL, max_tokens: 4096,
@@ -516,10 +596,16 @@ function headerBar(leftLines, rightText) {
   });
 }
 
-// Split "80 g ovsenih kosmičev (311 kcal, 10,8 g B)" → { name, info }
+// Vrne samo čisto ime sestavine brez kcal, beljakovin, oklepajev in konverzijskih opomb
 function splitIngredient(ing) {
-  const match = ing.match(/^(.*?)\s*(\([^)]+\))\s*$/);
-  return match ? { name: match[1], info: match[2] } : { name: ing, info: "" };
+  let name = String(ing || "");
+  // Odstrani vse oklepaje z vsebino: "(345 kcal, 8,5 g B)", "(389 kcal, 13,5 g B)" itd.
+  name = name.replace(/\s*\([^)]*\)/g, "");
+  // Odstrani "– 100 g surovega" ali "- 100 g surovega" tip konverzijskih opomb
+  name = name.replace(/\s*[–\-]\s*\d+\s*g\s*surovega[^,]*/gi, "");
+  // Odstrani morebitne odvečne presledke in pomišljaje na koncu
+  name = name.replace(/\s*[–\-]\s*$/, "").trim();
+  return { name, info: "" };
 }
 
 // Meal card: dark card with left red accent, number/name/kcal left, ingredients right
@@ -540,7 +626,7 @@ function mealCard(meal, idx) {
             margins: { top: 120, bottom: 120, left: 200, right: 160 },
             children: [
               new Paragraph({ spacing: { before: 0, after: 60 }, children: [new TextRun({ text: String(meal.number).padStart(2, "0"), bold: true, size: 40, color: RED, font: "Arial" })] }),
-              new Paragraph({ spacing: { before: 0, after: 40 }, children: [new TextRun({ text: meal.name, bold: true, size: 20, color: WHITE, font: "Arial" })] }),
+              new Paragraph({ spacing: { before: 0, after: 40 }, children: [new TextRun({ text: sanitizeText(meal.name), bold: true, size: 20, color: WHITE, font: "Arial" })] }),
               new Paragraph({ spacing: { before: 0, after: 0 }, children: [new TextRun({ text: meal.calories + " kcal | " + meal.protein + " g beljakovin", size: 18, color: GRAY, font: "Arial" })] }),
             ],
           }),
@@ -550,7 +636,7 @@ function mealCard(meal, idx) {
             borders: cellBorders,
             margins: { top: 100, bottom: 100, left: 160, right: 160 },
             children: meal.ingredients.map((ing) => {
-              const { name } = splitIngredient(ing);
+              const { name } = splitIngredient(sanitizeText(ing));
               return new Paragraph({
                 spacing: { before: 40, after: 40 },
                 children: [new TextRun({ text: name, size: 20, color: LIGHT, font: "Arial" })],
@@ -568,10 +654,10 @@ function exerciseCard(ex, idx) {
   const bg = idx % 2 === 0 ? DARK_CARD : DARK_ROW;
   const lW = 2800, rW = CW - lW;
   const rightChildren = [
-    new Paragraph({ spacing: { before: 0, after: ex.note ? 80 : 0 }, children: [new TextRun({ text: ex.sets_reps, bold: true, size: 34, color: WHITE, font: "Arial" })] }),
+    new Paragraph({ spacing: { before: 0, after: ex.note ? 80 : 0 }, children: [new TextRun({ text: sanitizeText(ex.sets_reps), bold: true, size: 34, color: WHITE, font: "Arial" })] }),
   ];
   if (ex.note) {
-    rightChildren.push(new Paragraph({ spacing: { before: 0, after: 0 }, children: [new TextRun({ text: ex.note, size: 18, color: GRAY, font: "Arial" })] }));
+    rightChildren.push(new Paragraph({ spacing: { before: 0, after: 0 }, children: [new TextRun({ text: sanitizeText(ex.note), size: 18, color: GRAY, font: "Arial" })] }));
   }
   return new Table({
     width: { size: CW, type: WidthType.DXA },
@@ -587,7 +673,7 @@ function exerciseCard(ex, idx) {
             margins: { top: 120, bottom: 120, left: 200, right: 160 },
             children: [
               new Paragraph({ spacing: { before: 0, after: 60 }, children: [new TextRun({ text: String(idx + 1).padStart(2, "0"), bold: true, size: 36, color: RED, font: "Arial" })] }),
-              new Paragraph({ spacing: { before: 0, after: 0 }, children: [new TextRun({ text: ex.name, bold: true, size: 22, color: WHITE, font: "Arial" })] }),
+              new Paragraph({ spacing: { before: 0, after: 0 }, children: [new TextRun({ text: sanitizeText(ex.name), bold: true, size: 22, color: WHITE, font: "Arial" })] }),
             ],
           }),
           new TableCell({
@@ -628,29 +714,28 @@ function generateMealDocx(userData, plan) {
   children.push(redRule(12, 280));
   children.push(statsTable(
     plan.summary.calories_per_day, "KALORIJ NA DAN",
-    plan.summary.protein_per_day + " g", "BELJAKOVIN NA DAN"
+    plan.summary.protein_per_day, "BELJAKOVIN NA DAN"
   ));
   children.push(sp(280));
   children.push(redRule(4, 200));
 
   children.push(new Paragraph({
     spacing: { before: 200, after: 180 },
-    children: [new TextRun({ text: "PRILAGODITVE JEDILNIKA", bold: true, size: 20, color: RED, font: "Arial", characterSpacing: 20 })],
+    children: [new TextRun({ text: "PRILAGODITVE JEDILNIKA", bold: true, size: 24, color: RED, font: "Arial", characterSpacing: 20 })],
   }));
 
-  children.push(new Paragraph({
-    spacing: { before: 0, after: 200 },
-    children: [new TextRun({ text: plan.adaptations, size: 20, color: LIGHT, font: "Arial" })],
-  }));
+  // Adaptations (glavno uvodno besedilo) – razdeljeno na odstavke, font 12pt (size 24)
+  // keepLines: true zagotovi, da se odstavek ne razpolovi čez stran
+  const adaptationParagraphs = splitParagraphs(plan.adaptations);
+  adaptationParagraphs.forEach((para, idx) => {
+    children.push(new Paragraph({
+      spacing: { before: idx === 0 ? 0 : 200, after: 200, line: 340 },
+      keepLines: true,
+      children: [new TextRun({ text: para, size: 24, color: LIGHT, font: "Arial" })],
+    }));
+  });
 
-  // Intro page
-  children.push(new Paragraph({ children: [new PageBreak()] }));
-  children.push(new Paragraph({
-    spacing: { before: 0, after: 200 },
-    children: [new TextRun({ text: plan.intro, size: 20, color: LIGHT, font: "Arial" })],
-  }));
-
-  // Day pages
+  // Day pages – vsak dan na svoji strani (od strani 3 naprej)
   plan.days.forEach((day) => {
     children.push(new Paragraph({ children: [new PageBreak()] }));
 
@@ -668,6 +753,23 @@ function generateMealDocx(userData, plan) {
       children.push(sp(80));
     });
   });
+
+  // Zaključno motivacijsko besedilo na koncu dokumenta (na svoji strani)
+  if (plan.intro) {
+    children.push(new Paragraph({ children: [new PageBreak()] }));
+    children.push(new Paragraph({
+      spacing: { before: 200, after: 180 },
+      children: [new TextRun({ text: "ZAKLJUČEK", bold: true, size: 24, color: RED, font: "Arial", characterSpacing: 20 })],
+    }));
+    const closingParagraphs = splitParagraphs(plan.intro);
+    closingParagraphs.forEach((para, idx) => {
+      children.push(new Paragraph({
+        spacing: { before: idx === 0 ? 0 : 200, after: 200, line: 340 },
+        keepLines: true,
+        children: [new TextRun({ text: para, size: 24, color: LIGHT, font: "Arial" })],
+      }));
+    });
+  }
 
   return Packer.toBuffer(buildDoc(children));
 }
@@ -703,62 +805,71 @@ function generateTrainingDocx(userData, plan) {
   children.push(sp(280));
   children.push(redRule(4, 200));
 
-  // Intro text
-  children.push(new Paragraph({
-    spacing: { before: 200, after: 200 },
-    children: [new TextRun({ text: plan.intro, size: 20, color: LIGHT, font: "Arial" })],
-  }));
+  // Intro text – razdeljen na odstavke, font 12pt (size 24), teče naravno na drugo stran
+  // keepLines: true zagotovi, da se noben odstavek ne razpolovi čez stran
+  const trainingIntroParagraphs = splitParagraphs(plan.intro);
+  trainingIntroParagraphs.forEach((para, idx) => {
+    children.push(new Paragraph({
+      spacing: { before: idx === 0 ? 200 : 200, after: 200, line: 340 },
+      keepLines: true,
+      children: [new TextRun({ text: para, size: 24, color: LIGHT, font: "Arial" })],
+    }));
+  });
 
   // Gray divider
   children.push(new Paragraph({
-    spacing: { before: 0, after: 200 },
+    spacing: { before: 200, after: 200 },
     border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: GRAY, space: 1 } },
     children: [],
+    keepNext: true,
   }));
 
-  // Schedule section header
+  // Schedule section header – drži skupaj s tabelo
   children.push(new Paragraph({
     spacing: { before: 200, after: 160 },
-    children: [new TextRun({ text: "PRIMER TEDENSKEGA RAZPOREDA", bold: true, size: 20, color: RED, font: "Arial", characterSpacing: 20 })],
+    children: [new TextRun({ text: "PRIMER TEDENSKEGA RAZPOREDA", bold: true, size: 22, color: RED, font: "Arial", characterSpacing: 20 })],
+    keepNext: true,
+    keepLines: true,
   }));
 
-  // Schedule rows
-  plan.schedule.forEach((item, i) => {
+  // Schedule – ENA sama tabela z vsemi vrsticami, z cantSplit=true na vsaki vrstici
+  // To preprečuje razdelitev tabele med strani
+  const scheduleRows = plan.schedule.map((item, i) => {
     const isRest = norm(item.workout).includes("poc") || norm(item.workout).includes("rest");
     const bg = i % 2 === 0 ? DARK_CARD : DARK_ROW;
     const accentColor = isRest ? GRAY : RED;
     const textColor = isRest ? GRAY : LIGHT;
 
-    children.push(new Table({
-      width: { size: CW, type: WidthType.DXA },
-      columnWidths: [CW - 4000, 4000],
-      borders: tableBorders,
-      rows: [
-        new TableRow({
-          height: { value: 480, rule: "atLeast" },
-          children: [
-            new TableCell({
-              width: { size: CW - 4000, type: WidthType.DXA },
-              shading: { fill: bg, type: ShadingType.CLEAR },
-              borders: { top: nb, bottom: nb, left: { style: BorderStyle.SINGLE, size: 12, color: accentColor }, right: nb },
-              margins: { top: 60, bottom: 60, left: 200, right: 80 },
-              verticalAlign: VerticalAlign.CENTER,
-              children: [new Paragraph({ children: [new TextRun({ text: item.day.toUpperCase(), bold: true, size: 18, color: WHITE, font: "Arial" })] })],
-            }),
-            new TableCell({
-              width: { size: 4000, type: WidthType.DXA },
-              shading: { fill: bg, type: ShadingType.CLEAR },
-              borders: cellBorders,
-              margins: { top: 60, bottom: 60, left: 80, right: 200 },
-              verticalAlign: VerticalAlign.CENTER,
-              children: [new Paragraph({ children: [new TextRun({ text: item.workout, size: 18, color: textColor, font: "Arial" })] })],
-            }),
-          ],
+    return new TableRow({
+      height: { value: 540, rule: "atLeast" },
+      cantSplit: true,
+      children: [
+        new TableCell({
+          width: { size: CW - 4000, type: WidthType.DXA },
+          shading: { fill: bg, type: ShadingType.CLEAR },
+          borders: { top: nb, bottom: nb, left: { style: BorderStyle.SINGLE, size: 12, color: accentColor }, right: nb },
+          margins: { top: 100, bottom: 100, left: 200, right: 80 },
+          verticalAlign: VerticalAlign.CENTER,
+          children: [new Paragraph({ children: [new TextRun({ text: sanitizeText(item.day).toUpperCase(), bold: true, size: 18, color: WHITE, font: "Arial" })] })],
+        }),
+        new TableCell({
+          width: { size: 4000, type: WidthType.DXA },
+          shading: { fill: bg, type: ShadingType.CLEAR },
+          borders: cellBorders,
+          margins: { top: 100, bottom: 100, left: 80, right: 200 },
+          verticalAlign: VerticalAlign.CENTER,
+          children: [new Paragraph({ children: [new TextRun({ text: sanitizeText(item.workout), size: 18, color: textColor, font: "Arial" })] })],
         }),
       ],
-    }));
-    children.push(sp(40));
+    });
   });
+
+  children.push(new Table({
+    width: { size: CW, type: WidthType.DXA },
+    columnWidths: [CW - 4000, 4000],
+    borders: tableBorders,
+    rows: scheduleRows,
+  }));
 
   // "STRENGTH AND HONOR" footer on schedule page
   children.push(sp(200));
@@ -773,7 +884,7 @@ function generateTrainingDocx(userData, plan) {
     children.push(new Paragraph({ children: [new PageBreak()] }));
 
     children.push(headerBar(
-      [{ text: workout.name, bold: true, size: 44 }],
+      [{ text: sanitizeText(workout.name), bold: true, size: 44 }],
       "STRENGTH AND HONOR"
     ));
     children.push(sp(120));
